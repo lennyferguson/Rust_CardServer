@@ -1,11 +1,18 @@
 extern crate rand;
 mod game {
+    //! 'game' module is used for handling the data and logic for a card game. 
+    //! 'server' module will issue the creation, and control of the various
+    //! game components.
+    
     static SUITES:[&'static str;4] = ["Heart", "Spade", "Diamond", "Club"];
     static VALUES:[&'static str;13] = ["Ace","Two", "Three", "Four", "Five",
                                        "Six", "Seven", "Eight", "Nine","Ten",
                                        "Jack", "Queen", "King"];
     use rand::{thread_rng,Rng};    
     use std::ops::Index;
+
+    /// Struct that represents a Playing Card belonging to a Deck or Hand
+    /// Can be copied and moved, size is known at runtime.
     #[derive(Copy,Clone)]
     pub struct Card {
         value:usize,
@@ -13,12 +20,20 @@ mod game {
     }
     
     impl Card {
+        
+        /// Generates a new Card.
         pub fn new(_val:usize, _suite:usize)->Card {
             Card{value:_val, suite:_suite}
         }
         
-        /* Returns a Tuple of type (String, String)
-        represeting (Value,Suite) */
+        /// Returns a Tuple of type (String, String)
+        /// represeting (Value,Suite)
+        /// # Examples
+        /// '''
+        /// let val = game::Card::new(0,0);
+        /// let tup = val.to_string_pair();
+        /// println!("{_val} of {_suite}s", tup.0, tup.1);
+        ///'''
         pub fn to_string_pair(&self)->(String,String) {
             (VALUES[self.value].to_string(), SUITES[self.suite].to_string())
         }
