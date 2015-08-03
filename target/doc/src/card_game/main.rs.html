@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `main.rs`.">
+    <meta name="description" content="Source to the Rust file `src/main.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>main.rs.html -- source</title>
@@ -142,12 +142,13 @@
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
-<span id="103">103</span>
-<span id="104">104</span>
 </pre><pre class='rust '>
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>rand</span>;
-<span class='attribute'>#[<span class='ident'>doc</span> <span class='op'>=</span> <span class='string'>&quot;Game Doc&quot;</span>]</span>
 <span class='kw'>mod</span> <span class='ident'>game</span> {
+    <span class='doccomment'>//! &#39;game&#39; module is used for handling the data and logic for a card game. </span>
+    <span class='doccomment'>//! &#39;server&#39; module will issue the creation, and control of the various</span>
+    <span class='doccomment'>//! game components.</span>
+    
     <span class='kw'>static</span> <span class='ident'>SUITES</span>:[<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span>;<span class='number'>4</span>] <span class='op'>=</span> [<span class='string'>&quot;Heart&quot;</span>, <span class='string'>&quot;Spade&quot;</span>, <span class='string'>&quot;Diamond&quot;</span>, <span class='string'>&quot;Club&quot;</span>];
     <span class='kw'>static</span> <span class='ident'>VALUES</span>:[<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span>;<span class='number'>13</span>] <span class='op'>=</span> [<span class='string'>&quot;Ace&quot;</span>,<span class='string'>&quot;Two&quot;</span>, <span class='string'>&quot;Three&quot;</span>, <span class='string'>&quot;Four&quot;</span>, <span class='string'>&quot;Five&quot;</span>,
                                        <span class='string'>&quot;Six&quot;</span>, <span class='string'>&quot;Seven&quot;</span>, <span class='string'>&quot;Eight&quot;</span>, <span class='string'>&quot;Nine&quot;</span>,<span class='string'>&quot;Ten&quot;</span>,
@@ -164,22 +165,16 @@
     }
     
     <span class='kw'>impl</span> <span class='ident'>Card</span> {
+        
         <span class='doccomment'>/// Generates a new Card.</span>
-
         <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>_val</span>:<span class='ident'>usize</span>, <span class='ident'>_suite</span>:<span class='ident'>usize</span>)<span class='op'>-&gt;</span><span class='ident'>Card</span> {
             <span class='ident'>Card</span>{<span class='ident'>value</span>:<span class='ident'>_val</span>, <span class='ident'>suite</span>:<span class='ident'>_suite</span>}
         }
-        
-        <span class='doccomment'>/// Returns a Tuple of type (String, String)</span>
-        <span class='doccomment'>/// represeting (Value,Suite)</span>
-        <span class='doccomment'>/// # Examples</span>
-        <span class='doccomment'>/// &#39;&#39;&#39;</span>
-        <span class='doccomment'>/// let val = game::Card::new(0,0);</span>
-        <span class='doccomment'>/// let tup = val.to_string_pair();</span>
-        <span class='doccomment'>/// println!(&quot;{_val} of {_suite}s&quot;, tup.0, tup.1);</span>
-        <span class='doccomment'>///&#39;&#39;&#39;</span>
-        <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>to_string_pair</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>)<span class='op'>-&gt;</span>(<span class='ident'>String</span>,<span class='ident'>String</span>) {
-            (<span class='ident'>VALUES</span>[<span class='self'>self</span>.<span class='ident'>value</span>].<span class='ident'>to_string</span>(), <span class='ident'>SUITES</span>[<span class='self'>self</span>.<span class='ident'>suite</span>].<span class='ident'>to_string</span>())
+
+        <span class='doccomment'>/// Returns a pair of type &amp;&#39;static str </span>
+        <span class='doccomment'>/// representing (value, suite)</span>
+        <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>to_string_pair</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>)<span class='op'>-&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span>,<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span>) {
+            (<span class='ident'>VALUES</span>[<span class='self'>self</span>.<span class='ident'>value</span>], <span class='ident'>SUITES</span>[<span class='self'>self</span>.<span class='ident'>suite</span>])
         }
     }
     
@@ -243,6 +238,7 @@
         <span class='kw'>let</span> <span class='ident'>tup</span> <span class='op'>=</span> <span class='ident'>card</span>.<span class='ident'>to_string_pair</span>();
         <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{} of {}s&quot;</span>, <span class='ident'>tup</span>.<span class='number'>0</span>, <span class='ident'>tup</span>.<span class='number'>1</span>)
     }
+
     <span class='comment'>/*
     let c = deck[0];
     let t = c.to_string_pair();

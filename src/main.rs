@@ -25,17 +25,11 @@ mod game {
         pub fn new(_val:usize, _suite:usize)->Card {
             Card{value:_val, suite:_suite}
         }
-        
-        /// Returns a Tuple of type (String, String)
-        /// represeting (Value,Suite)
-        /// # Examples
-        /// '''
-        /// let val = game::Card::new(0,0);
-        /// let tup = val.to_string_pair();
-        /// println!("{_val} of {_suite}s", tup.0, tup.1);
-        ///'''
-        pub fn to_string_pair(&self)->(String,String) {
-            (VALUES[self.value].to_string(), SUITES[self.suite].to_string())
+
+        /// Returns a pair of type &'static str 
+        /// representing (value, suite)
+        pub fn to_string_pair(&self)->(&'static str,&'static str) {
+            (VALUES[self.value], SUITES[self.suite])
         }
     }
     
@@ -99,6 +93,7 @@ fn main() {
         let tup = card.to_string_pair();
         println!("{} of {}s", tup.0, tup.1)
     }
+
     /*
     let c = deck[0];
     let t = c.to_string_pair();
