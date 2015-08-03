@@ -1,4 +1,8 @@
 extern crate rand;
+extern crate mio;
+
+mod game_server;
+
 mod game {
     //! 'game' module is used for handling the data and logic for a card game. 
     //! 'server' module will issue the creation, and control of the various
@@ -19,8 +23,7 @@ mod game {
         suite:usize,
     }
     
-    impl Card {
-        
+    impl Card {        
         /// Generates a new Card.
         pub fn new(_val:usize, _suite:usize)->Card {
             Card{value:_val, suite:_suite}
