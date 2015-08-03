@@ -45,8 +45,9 @@ mod game {
 
         pub fn shuffle(&mut self) {
             let mut rng = thread_rng();
-            for card in &self.discard_pile {
-                self.card_deck.push(*card);
+            while self.discard_pile.len() > 0 {
+                let card = self.discard_pile.pop();
+                self.card_deck.push(card.unwrap());
             }
             rng.shuffle(&mut self.card_deck);
         }
