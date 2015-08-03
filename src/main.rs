@@ -107,7 +107,7 @@ mod game {
         /// let deck = Deck::new();
         /// let card = deck[1];
         /// let c_tup = card.to_string_pair();
-        /// println!("{} of {}s", c_tup.0, c_tup.1);
+        /// println!("A {} of {}s is a Two of Hearts", c_tup.0, c_tup.1);
         /// '''
         fn index<'a>(&'a self, _index:usize)->&'a Card {
             &self.card_deck[_index]
