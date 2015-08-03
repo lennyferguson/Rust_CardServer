@@ -7,6 +7,8 @@ mod game {
     //! 'game' module is used for handling the data and logic for a card game. 
     //! 'server' module will issue the creation, and control of the various
     //! game components.
+
+    #![allow(dead_code)]
     
     /* Static Array's corresponding to the ordinal values and suites of a card */
     static SUITES:[&'static str;4] = ["Heart", "Spade", "Diamond", "Club"];
@@ -115,17 +117,33 @@ mod game {
     }
 }
 
+#[test]
+fn test_1() {
+    #![allow(unused_variables)]
+    let deck = game::Deck::new();
+    let card = deck[0];
+    let tup = card.to_string_pair();
+    assert!(tup.0 == "Ace" && tup.1 == "Heart");
+}
+
+#[test]
+fn test_2() {
+    #![allow(unused_variables)]
+    let deck = game::Deck::new();
+    let mut count = 0;
+    for card in deck {
+        count += 1;
+    }
+    assert!(count == 52);
+}
+
+
 fn main() {
+    #![allow(dead_code)]
     let mut deck = game::Deck::new();
     deck.shuffle();
     for card in deck {
         let tup = card.to_string_pair();
-        println!("{} of {}s", tup.0, tup.1)
+        println!("{} of {}s", tup.0, tup.1);
     }
-
-    /*
-    let c = deck[0];
-    let t = c.to_string_pair();
-    println!("{} of {}s", t.0, t.1);
-     */
 }
