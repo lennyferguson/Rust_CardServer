@@ -142,13 +142,45 @@
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
 </pre><pre class='rust '>
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>rand</span>;
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>mio</span>;
+
+<span class='kw'>mod</span> <span class='ident'>game_server</span>;
+
 <span class='kw'>mod</span> <span class='ident'>game</span> {
     <span class='doccomment'>//! &#39;game&#39; module is used for handling the data and logic for a card game. </span>
     <span class='doccomment'>//! &#39;server&#39; module will issue the creation, and control of the various</span>
     <span class='doccomment'>//! game components.</span>
     
+    <span class='comment'>/* Static Array&#39;s corresponding to the ordinal values and suites of a card */</span>
     <span class='kw'>static</span> <span class='ident'>SUITES</span>:[<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span>;<span class='number'>4</span>] <span class='op'>=</span> [<span class='string'>&quot;Heart&quot;</span>, <span class='string'>&quot;Spade&quot;</span>, <span class='string'>&quot;Diamond&quot;</span>, <span class='string'>&quot;Club&quot;</span>];
     <span class='kw'>static</span> <span class='ident'>VALUES</span>:[<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span>;<span class='number'>13</span>] <span class='op'>=</span> [<span class='string'>&quot;Ace&quot;</span>,<span class='string'>&quot;Two&quot;</span>, <span class='string'>&quot;Three&quot;</span>, <span class='string'>&quot;Four&quot;</span>, <span class='string'>&quot;Five&quot;</span>,
                                        <span class='string'>&quot;Six&quot;</span>, <span class='string'>&quot;Seven&quot;</span>, <span class='string'>&quot;Eight&quot;</span>, <span class='string'>&quot;Nine&quot;</span>,<span class='string'>&quot;Ten&quot;</span>,
@@ -164,8 +196,7 @@
         <span class='ident'>suite</span>:<span class='ident'>usize</span>,
     }
     
-    <span class='kw'>impl</span> <span class='ident'>Card</span> {
-        
+    <span class='kw'>impl</span> <span class='ident'>Card</span> {        
         <span class='doccomment'>/// Generates a new Card.</span>
         <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>_val</span>:<span class='ident'>usize</span>, <span class='ident'>_suite</span>:<span class='ident'>usize</span>)<span class='op'>-&gt;</span><span class='ident'>Card</span> {
             <span class='ident'>Card</span>{<span class='ident'>value</span>:<span class='ident'>_val</span>, <span class='ident'>suite</span>:<span class='ident'>_suite</span>}
@@ -177,7 +208,8 @@
             (<span class='ident'>VALUES</span>[<span class='self'>self</span>.<span class='ident'>value</span>], <span class='ident'>SUITES</span>[<span class='self'>self</span>.<span class='ident'>suite</span>])
         }
     }
-    
+
+    <span class='doccomment'>/// A Container for Cards including a draw pile and a discard pile.</span>
     <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Deck</span> {
         <span class='ident'>card_deck</span>:<span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Card</span><span class='op'>&gt;</span>,
         <span class='ident'>discard_pile</span>:<span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Card</span><span class='op'>&gt;</span>,
@@ -185,6 +217,8 @@
     }
     
     <span class='kw'>impl</span> <span class='ident'>Deck</span> {
+
+        <span class='doccomment'>///Creates a new, unshuffled deck containing the standard 52 cards.</span>
         <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>()<span class='op'>-&gt;</span><span class='ident'>Deck</span> {
             <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>cards</span> <span class='op'>=</span> <span class='ident'>Vec</span>::<span class='ident'>new</span>();
             <span class='kw'>let</span> <span class='ident'>discard</span> <span class='op'>=</span> <span class='ident'>Vec</span>::<span class='ident'>new</span>();
@@ -197,6 +231,8 @@
             <span class='ident'>Deck</span>{<span class='ident'>card_deck</span>:<span class='ident'>cards</span>, <span class='ident'>discard_pile</span>:<span class='ident'>discard</span>, <span class='ident'>current</span>:<span class='number'>0</span>}
         }
 
+        <span class='doccomment'>/// Merges the Decks discard pile with the draw pile and shuffles</span>
+        <span class='doccomment'>/// the draw pile in place. </span>
         <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>shuffle</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
             <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>rng</span> <span class='op'>=</span> <span class='ident'>thread_rng</span>();
             <span class='kw'>while</span> <span class='self'>self</span>.<span class='ident'>discard_pile</span>.<span class='ident'>len</span>() <span class='op'>&gt;</span> <span class='number'>0</span> {
@@ -209,6 +245,17 @@
 
     <span class='kw'>impl</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>Deck</span> {
         <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> <span class='ident'>Card</span>;
+
+        <span class='doccomment'>/// impl of Iterator::next function allows use of foreach style</span>
+        <span class='doccomment'>/// iterator on a deck type directly.</span>
+        <span class='doccomment'>/// # Examples</span>
+        <span class='doccomment'>/// &#39;&#39;&#39;</span>
+        <span class='doccomment'>/// let deck = Deck::new();</span>
+        <span class='doccomment'>/// for card in deck {</span>
+        <span class='doccomment'>///     let c_tup = card.to_string_pair();</span>
+        <span class='doccomment'>///     println!(&quot;{_val} of {_suite}s&quot;, _val=c_tup.0, _val=c_tup.1);</span>
+        <span class='doccomment'>/// }</span>
+        <span class='doccomment'>/// &#39;&#39;&#39;</span>
         <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>)<span class='op'>-&gt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Card</span><span class='op'>&gt;</span> {
             <span class='kw'>let</span> <span class='ident'>length</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>card_deck</span>.<span class='ident'>len</span>();
             <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>current</span> <span class='op'>&lt;</span> <span class='ident'>length</span> {
@@ -225,6 +272,13 @@
 
     <span class='kw'>impl</span> <span class='ident'>Index</span><span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>Deck</span> {
         <span class='kw'>type</span> <span class='ident'>Output</span> <span class='op'>=</span> <span class='ident'>Card</span>;
+
+        <span class='doccomment'>/// impl of Index::index allows indexed access to deck</span>
+        <span class='doccomment'>/// # Examples</span>
+        <span class='doccomment'>/// &#39;&#39;&#39;</span>
+        <span class='doccomment'>/// let deck = Deck::new();</span>
+        <span class='doccomment'>/// let card = deck[1];</span>
+        <span class='doccomment'>/// &#39;&#39;&#39;</span>
         <span class='kw'>fn</span> <span class='ident'>index</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='self'>self</span>, <span class='ident'>_index</span>:<span class='ident'>usize</span>)<span class='op'>-&gt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>Card</span> {
             <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>card_deck</span>[<span class='ident'>_index</span>]
         }
