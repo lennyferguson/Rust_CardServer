@@ -150,6 +150,7 @@ mod game {
             self.cards.push(to_add);
         }
 
+        /// Plays the entire hand, per Poker rules.
         pub fn play_hand(&mut self)->Vec<Card> {
             let mut play:Vec<Card> = Vec::new();
             while self.cards.len() > 0 {
@@ -164,6 +165,7 @@ mod game {
         }
     }
 
+    /// Draws ammt # of cards from deck and adds cards to hand.
     pub fn draw_to_hand(deck:&mut Deck, hand:&mut Hand, ammt:usize) {   
         let mut count = ammt;
         while deck.count() > 0 && count > 0 {
@@ -173,6 +175,7 @@ mod game {
         }
     }
 
+    /// Calls play_hand on hand, and adds hand to discard of deck.
     pub fn play_to_discard(deck:&mut Deck, hand:&mut Hand) {
         let played = hand.play_hand();
         deck.discard_cards(played);
@@ -180,7 +183,8 @@ mod game {
 }
 
 #[test]
-fn test_1() {
+/// Test the index fn
+fn index_test() {
     #![allow(unused_variables)]
     let deck = game::Deck::new();
     let card = deck[0];
@@ -189,7 +193,8 @@ fn test_1() {
 }
 
 #[test]
-fn test_2() {
+/// Test the iterator
+fn iterator_test() {
     #![allow(unused_variables)]
     let deck = game::Deck::new();
     let mut count = 0;
@@ -200,7 +205,8 @@ fn test_2() {
 }
 
 #[test]
-fn test_3() {
+/// Test the draw_to_hand fn
+fn draw_to_hand_test() {
     #![allow(unused_variables)]
     let mut deck = game::Deck::new();
     let mut hand = game::Hand::new();
@@ -210,7 +216,8 @@ fn test_3() {
 }
 
 #[test]
-fn test_4() {
+/// Test the play_to_discard fn
+fn play_to_discard_test() {
    #![allow(unused_variables)]
     let mut deck = game::Deck::new();
     let mut hand = game::Hand::new();
