@@ -71,11 +71,25 @@ mod game {
             }
             rng.shuffle(&mut self.card_deck);
         }
-    }
 
+        pub fn draw_card(&mut self)->Option<Card> {
+            self.card_deck.pop()
+        }
+
+        pub fn discard_cards(&mut self, discard:Vec<Card>) {
+            for card in discard {
+                self.discard_pile.push(card);
+            }
+        }
+
+        pub fn count(&self)->usize {
+            self.card_deck.len()
+        }
+    }
+    
     impl Iterator for Deck {
         type Item = Card;
-
+        
         /// impl of Iterator::next function allows use of foreach style
         /// iterator on a deck type directly.
         /// # Examples
@@ -115,6 +129,54 @@ mod game {
             &self.card_deck[_index]
         }
     }
+
+    /// Struct that represents a players hand.
+    /// A final implementation of this class will include the complex
+    /// logic for comparing hands for value
+    /// PartialOrd => Straight Flush > Four of a Kind > Full House > Flush > Straight
+    /// > Three of a Kind > Two Pair > One Pair > High Card
+    ///
+    /// Where Ord settles equivalent categories by favoring the side with the higher values.
+    pub struct Hand {
+        cards:Vec<Card>,
+    }
+
+    impl Hand {
+        pub fn new()->Hand {
+            Hand{ cards:Vec::new() }
+        }
+
+        pub fn add_card(&mut self, to_add:Card) {
+            self.cards.push(to_add);
+        }
+
+        pub fn play_hand(&mut self)->Vec<Card> {
+            let mut play:Vec<Card> = Vec::new();
+            while self.cards.len() > 0 {
+                let card = self.cards.pop();
+                play.push(card.unwrap());
+            }
+            play
+        }
+
+        pub fn count(&self)->usize {
+            self.cards.len()
+        }
+    }
+
+    pub fn draw_to_hand(deck:&mut Deck, hand:&mut Hand, ammt:usize) {   
+        let mut count = ammt;
+        while deck.count() > 0 && count > 0 {
+            count -= 1;
+            let card = deck.draw_card();
+            hand.add_card(card.unwrap());
+        }
+    }
+
+    pub fn play_to_discard(deck:&mut Deck, hand:&mut Hand) {
+        let played = hand.play_hand();
+        deck.discard_cards(played);
+    }
 }
 
 #[test]
@@ -137,6 +199,27 @@ fn test_2() {
     assert!(count == 52);
 }
 
+#[test]
+fn test_3() {
+    #![allow(unused_variables)]
+    let mut deck = game::Deck::new();
+    let mut hand = game::Hand::new();
+    game::draw_to_hand(&mut deck,&mut hand,5);
+    assert!(deck.count() == (47));
+    assert!(hand.count() == 5);
+}
+
+#[test]
+fn test_4() {
+   #![allow(unused_variables)]
+    let mut deck = game::Deck::new();
+    let mut hand = game::Hand::new();
+    game::draw_to_hand(&mut deck,&mut hand,5);
+    game::play_to_discard(&mut deck, &mut hand);
+    assert!(hand.count() == 0);
+    deck.shuffle();
+    assert!(deck.count() == 52);
+}
 
 fn main() {
     #![allow(dead_code)]
