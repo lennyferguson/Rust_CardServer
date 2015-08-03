@@ -81,7 +81,7 @@ mod game {
         /// let deck = Deck::new();
         /// for card in deck {
         ///     let c_tup = card.to_string_pair();
-        ///     println!("{_val} of {_suite}s", _val=c_tup.0, _val=c_tup.1);
+        ///     println!("{} of {}s",c_tup.0,c_tup.1);
         /// }
         /// '''
         fn next(&mut self)->Option<Card> {
@@ -106,6 +106,8 @@ mod game {
         /// '''
         /// let deck = Deck::new();
         /// let card = deck[1];
+        /// let c_tup = card.to_string_pair();
+        /// println!("{} of {}s", c_tup.0, c_tup.1);
         /// '''
         fn index<'a>(&'a self, _index:usize)->&'a Card {
             &self.card_deck[_index]
