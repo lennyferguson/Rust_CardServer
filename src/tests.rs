@@ -2,12 +2,15 @@ use game::*;
 
 #[test]
 /// Test the index fn
-fn index_test() {
+fn first_last_test() {
     #![allow(unused_variables)]
     let deck = Deck::new();
-    let card = deck[0];
-    let tup = card.to_string_pair();
-    assert!(tup.0 == "Ace" && tup.1 == "Heart");
+    let first = deck[0];
+    let last = deck[51];
+    let f_tup = first.to_string_pair();
+    let l_tup = last.to_string_pair();
+    assert!(f_tup.0 == "Ace" && f_tup.1 == "Diamond");
+    assert!(l_tup.0 == "King" && l_tup.1 == "Spade");
 }
 
 #[test]

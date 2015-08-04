@@ -16,7 +16,7 @@ mod game {
     #![allow(dead_code)]
     
     /* Static Array's corresponding to the ordinal values and suites of a card */
-    static SUITES:[&'static str;4] = ["Heart", "Spade", "Diamond", "Club"];
+    static SUITES:[&'static str;4] = ["Diamond", "Club", "Heart", "Spade"];
     static VALUES:[&'static str;13] = ["Ace","Two", "Three", "Four", "Five",
                                        "Six", "Seven", "Eight", "Nine","Ten",
                                        "Jack", "Queen", "King"];
