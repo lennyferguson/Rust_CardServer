@@ -3,6 +3,11 @@ extern crate mio;
 
 mod game_server;
 
+/*Conditional compilation and execution of tests module when executing
+  with the test directive. */
+#[cfg(test)]
+mod tests;
+
 mod game {
     //! 'game' module is used for handling the data and logic for a card game. 
     //! 'server' module will issue the creation, and control of the various
@@ -41,13 +46,12 @@ mod game {
 
     /// A Container for Cards including a draw pile and a discard pile.
     pub struct Deck {
-        card_deck:Vec<Card>,
+        draw_pile:Vec<Card>,
         discard_pile:Vec<Card>,
         current:usize,
     }
     
     impl Deck {
-
         ///Creates a new, unshuffled deck containing the standard 52 cards.
         pub fn new()->Deck {
             let mut cards = Vec::new();
@@ -58,7 +62,7 @@ mod game {
                     cards.push(card);
                 }
             }
-            Deck{card_deck:cards, discard_pile:discard, current:0}
+            Deck{draw_pile:cards, discard_pile:discard, current:0}
         }
 
         /// Merges the Decks discard pile with the draw pile and shuffles
@@ -67,13 +71,13 @@ mod game {
             let mut rng = thread_rng();
             while self.discard_pile.len() > 0 {
                 let card = self.discard_pile.pop();
-                self.card_deck.push(card.unwrap());
+                self.draw_pile.push(card.unwrap());
             }
-            rng.shuffle(&mut self.card_deck);
+            rng.shuffle(&mut self.draw_pile);
         }
 
         pub fn draw_card(&mut self)->Option<Card> {
-            self.card_deck.pop()
+            self.draw_pile.pop()
         }
 
         pub fn discard_cards(&mut self, discard:Vec<Card>) {
@@ -82,8 +86,9 @@ mod game {
             }
         }
 
+        ///Reports number of cards in draw pile
         pub fn count(&self)->usize {
-            self.card_deck.len()
+            self.draw_pile.len()
         }
     }
     
@@ -101,11 +106,11 @@ mod game {
         /// }
         /// '''
         fn next(&mut self)->Option<Card> {
-            let length = self.card_deck.len();
+            let length = self.draw_pile.len();
             if self.current < length {
                 let index = self.current;
                 self.current += 1;
-                Some(self.card_deck[index])
+                Some(self.draw_pile[index])
             }
             else {
                 self.current = 0;
@@ -123,10 +128,11 @@ mod game {
         /// let deck = Deck::new();
         /// let card = deck[1];
         /// let c_tup = card.to_string_pair();
-        /// println!("A {} of {}s is a Two of Hearts", c_tup.0, c_tup.1);
+        /// assert!("Two" ==  c_tup.0);
+        /// assert!("Heart" == c_tup.1);
         /// '''
         fn index<'a>(&'a self, _index:usize)->&'a Card {
-            &self.card_deck[_index]
+            &self.draw_pile[_index]
         }
     }
 
@@ -159,7 +165,7 @@ mod game {
             }
             play
         }
-
+        ///Reports number of cards in Hand
         pub fn count(&self)->usize {
             self.cards.len()
         }
@@ -180,52 +186,6 @@ mod game {
         let played = hand.play_hand();
         deck.discard_cards(played);
     }
-}
-
-#[test]
-/// Test the index fn
-fn index_test() {
-    #![allow(unused_variables)]
-    let deck = game::Deck::new();
-    let card = deck[0];
-    let tup = card.to_string_pair();
-    assert!(tup.0 == "Ace" && tup.1 == "Heart");
-}
-
-#[test]
-/// Test the iterator
-fn iterator_test() {
-    #![allow(unused_variables)]
-    let deck = game::Deck::new();
-    let mut count = 0;
-    for card in deck {
-        count += 1;
-    }
-    assert!(count == 52);
-}
-
-#[test]
-/// Test the draw_to_hand fn
-fn draw_to_hand_test() {
-    #![allow(unused_variables)]
-    let mut deck = game::Deck::new();
-    let mut hand = game::Hand::new();
-    game::draw_to_hand(&mut deck,&mut hand,5);
-    assert!(deck.count() == (47));
-    assert!(hand.count() == 5);
-}
-
-#[test]
-/// Test the play_to_discard fn
-fn play_to_discard_test() {
-   #![allow(unused_variables)]
-    let mut deck = game::Deck::new();
-    let mut hand = game::Hand::new();
-    game::draw_to_hand(&mut deck,&mut hand,5);
-    game::play_to_discard(&mut deck, &mut hand);
-    assert!(hand.count() == 0);
-    deck.shuffle();
-    assert!(deck.count() == 52);
 }
 
 fn main() {
