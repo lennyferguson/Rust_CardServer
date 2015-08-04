@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/Users/stewartcharles/Rust_Projects/card_game/src/main.rs`.">
+    <meta name="description" content="Source to the Rust file `main.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>main.rs.html -- source</title>
@@ -239,52 +239,16 @@
 <span id="197">197</span>
 <span id="198">198</span>
 <span id="199">199</span>
-<span id="200">200</span>
-<span id="201">201</span>
-<span id="202">202</span>
-<span id="203">203</span>
-<span id="204">204</span>
-<span id="205">205</span>
-<span id="206">206</span>
-<span id="207">207</span>
-<span id="208">208</span>
-<span id="209">209</span>
-<span id="210">210</span>
-<span id="211">211</span>
-<span id="212">212</span>
-<span id="213">213</span>
-<span id="214">214</span>
-<span id="215">215</span>
-<span id="216">216</span>
-<span id="217">217</span>
-<span id="218">218</span>
-<span id="219">219</span>
-<span id="220">220</span>
-<span id="221">221</span>
-<span id="222">222</span>
-<span id="223">223</span>
-<span id="224">224</span>
-<span id="225">225</span>
-<span id="226">226</span>
-<span id="227">227</span>
-<span id="228">228</span>
-<span id="229">229</span>
-<span id="230">230</span>
-<span id="231">231</span>
-<span id="232">232</span>
-<span id="233">233</span>
-<span id="234">234</span>
-<span id="235">235</span>
-<span id="236">236</span>
-<span id="237">237</span>
-<span id="238">238</span>
-<span id="239">239</span>
-<span id="240">240</span>
 </pre><pre class='rust '>
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>rand</span>;
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>mio</span>;
 
 <span class='kw'>mod</span> <span class='ident'>game_server</span>;
+
+<span class='comment'>/*Conditional compilation and execution of tests module when executing
+  with the test directive. */</span>
+<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
+<span class='kw'>mod</span> <span class='ident'>tests</span>;
 
 <span class='kw'>mod</span> <span class='ident'>game</span> {
     <span class='doccomment'>//! &#39;game&#39; module is used for handling the data and logic for a card game. </span>
@@ -330,7 +294,6 @@
     }
     
     <span class='kw'>impl</span> <span class='ident'>Deck</span> {
-
         <span class='doccomment'>///Creates a new, unshuffled deck containing the standard 52 cards.</span>
         <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>()<span class='op'>-&gt;</span><span class='ident'>Deck</span> {
             <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>cards</span> <span class='op'>=</span> <span class='ident'>Vec</span>::<span class='ident'>new</span>();
@@ -407,7 +370,8 @@
         <span class='doccomment'>/// let deck = Deck::new();</span>
         <span class='doccomment'>/// let card = deck[1];</span>
         <span class='doccomment'>/// let c_tup = card.to_string_pair();</span>
-        <span class='doccomment'>/// println!(&quot;A {} of {}s is a Two of Hearts&quot;, c_tup.0, c_tup.1);</span>
+        <span class='doccomment'>/// assert!(&quot;Two&quot; ==  c_tup.0);</span>
+        <span class='doccomment'>/// assert!(&quot;Heart&quot; == c_tup.1);</span>
         <span class='doccomment'>/// &#39;&#39;&#39;</span>
         <span class='kw'>fn</span> <span class='ident'>index</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='self'>self</span>, <span class='ident'>_index</span>:<span class='ident'>usize</span>)<span class='op'>-&gt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>Card</span> {
             <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>draw_pile</span>[<span class='ident'>_index</span>]
@@ -464,52 +428,6 @@
         <span class='kw'>let</span> <span class='ident'>played</span> <span class='op'>=</span> <span class='ident'>hand</span>.<span class='ident'>play_hand</span>();
         <span class='ident'>deck</span>.<span class='ident'>discard_cards</span>(<span class='ident'>played</span>);
     }
-}
-
-<span class='attribute'>#[<span class='ident'>test</span>]</span>
-<span class='doccomment'>/// Test the index fn</span>
-<span class='kw'>fn</span> <span class='ident'>index_test</span>() {
-    <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>allow</span>(<span class='ident'>unused_variables</span>)]</span>
-    <span class='kw'>let</span> <span class='ident'>deck</span> <span class='op'>=</span> <span class='ident'>game</span>::<span class='ident'>Deck</span>::<span class='ident'>new</span>();
-    <span class='kw'>let</span> <span class='ident'>card</span> <span class='op'>=</span> <span class='ident'>deck</span>[<span class='number'>0</span>];
-    <span class='kw'>let</span> <span class='ident'>tup</span> <span class='op'>=</span> <span class='ident'>card</span>.<span class='ident'>to_string_pair</span>();
-    <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>tup</span>.<span class='number'>0</span> <span class='op'>==</span> <span class='string'>&quot;Ace&quot;</span> <span class='op'>&amp;&amp;</span> <span class='ident'>tup</span>.<span class='number'>1</span> <span class='op'>==</span> <span class='string'>&quot;Heart&quot;</span>);
-}
-
-<span class='attribute'>#[<span class='ident'>test</span>]</span>
-<span class='doccomment'>/// Test the iterator</span>
-<span class='kw'>fn</span> <span class='ident'>iterator_test</span>() {
-    <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>allow</span>(<span class='ident'>unused_variables</span>)]</span>
-    <span class='kw'>let</span> <span class='ident'>deck</span> <span class='op'>=</span> <span class='ident'>game</span>::<span class='ident'>Deck</span>::<span class='ident'>new</span>();
-    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>count</span> <span class='op'>=</span> <span class='number'>0</span>;
-    <span class='kw'>for</span> <span class='ident'>card</span> <span class='kw'>in</span> <span class='ident'>deck</span> {
-        <span class='ident'>count</span> <span class='op'>+=</span> <span class='number'>1</span>;
-    }
-    <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>count</span> <span class='op'>==</span> <span class='number'>52</span>);
-}
-
-<span class='attribute'>#[<span class='ident'>test</span>]</span>
-<span class='doccomment'>/// Test the draw_to_hand fn</span>
-<span class='kw'>fn</span> <span class='ident'>draw_to_hand_test</span>() {
-    <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>allow</span>(<span class='ident'>unused_variables</span>)]</span>
-    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>deck</span> <span class='op'>=</span> <span class='ident'>game</span>::<span class='ident'>Deck</span>::<span class='ident'>new</span>();
-    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>hand</span> <span class='op'>=</span> <span class='ident'>game</span>::<span class='ident'>Hand</span>::<span class='ident'>new</span>();
-    <span class='ident'>game</span>::<span class='ident'>draw_to_hand</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>deck</span>,<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>hand</span>,<span class='number'>5</span>);
-    <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>deck</span>.<span class='ident'>count</span>() <span class='op'>==</span> (<span class='number'>47</span>));
-    <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>hand</span>.<span class='ident'>count</span>() <span class='op'>==</span> <span class='number'>5</span>);
-}
-
-<span class='attribute'>#[<span class='ident'>test</span>]</span>
-<span class='doccomment'>/// Test the play_to_discard fn</span>
-<span class='kw'>fn</span> <span class='ident'>play_to_discard_test</span>() {
-   <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>allow</span>(<span class='ident'>unused_variables</span>)]</span>
-    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>deck</span> <span class='op'>=</span> <span class='ident'>game</span>::<span class='ident'>Deck</span>::<span class='ident'>new</span>();
-    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>hand</span> <span class='op'>=</span> <span class='ident'>game</span>::<span class='ident'>Hand</span>::<span class='ident'>new</span>();
-    <span class='ident'>game</span>::<span class='ident'>draw_to_hand</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>deck</span>,<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>hand</span>,<span class='number'>5</span>);
-    <span class='ident'>game</span>::<span class='ident'>play_to_discard</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>deck</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>hand</span>);
-    <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>hand</span>.<span class='ident'>count</span>() <span class='op'>==</span> <span class='number'>0</span>);
-    <span class='ident'>deck</span>.<span class='ident'>shuffle</span>();
-    <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>deck</span>.<span class='ident'>count</span>() <span class='op'>==</span> <span class='number'>52</span>);
 }
 
 <span class='kw'>fn</span> <span class='ident'>main</span>() {
