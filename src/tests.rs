@@ -45,3 +45,17 @@ fn play_to_discard_test() {
     deck.shuffle();
     assert!(deck.count() == 52);
 }
+
+#[test]
+fn overdraw_test() {
+    #![allow(unused_variables)]
+    let mut deck = Deck::new();
+    let mut v:Vec<Hand> = Vec::new();
+    for x in 0..11 {
+        let mut hand = Hand::new();
+        draw_to_hand(&mut deck, &mut hand, 5);
+        v.push(hand);
+    }
+    assert!(deck.count() == 0);
+    assert!(v[10].count() == 2);
+}
