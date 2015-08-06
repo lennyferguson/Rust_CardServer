@@ -22,7 +22,7 @@ fn iterator_test() {
     for card in deck {
         count += 1;
     }
-    assert!(count == 52);
+    assert!(count == 52);    
 }
 
 #[test]
@@ -53,12 +53,8 @@ fn play_to_discard_test() {
 fn overdraw_test() {
     #![allow(unused_variables)]
     let mut deck = Deck::new();
-    let mut v:Vec<Hand> = Vec::new();
-    for x in 0..11 {
-        let mut hand = Hand::new();
-        draw_to_hand(&mut deck, &mut hand, 5);
-        v.push(hand);
-    }
+    let mut hand = Hand::new();
+    draw_to_hand(&mut deck, &mut hand, 100);
     assert!(deck.count() == 0);
-    assert!(v[10].count() == 2);
+    assert!(hand.count() == 52);
 }
